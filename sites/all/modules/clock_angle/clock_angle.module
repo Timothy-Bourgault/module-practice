@@ -50,5 +50,6 @@ function clock_angle_checker_form_submit($form, &$form_state) {
 }
 
 function clock_angle_guess_checker_results_page_display() {
-    return $_SESSION['clock_angle_checker'];
+    $angle = $_SESSION['clock_angle_checker'];
+    return "Hooray! Your angle is " . $angle . "!";
 }

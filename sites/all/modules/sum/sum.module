@@ -1,21 +1,20 @@
 <?php
 
 function sum_menu() {
-      $items = array();
-      $items['sum'] = array(
-              'title' => 'Calculate Sum',
-              'type' => MENU_NORMAL_ITEM,
-              'access callback' => TRUE,
-              'page callback' => 'drupal_get_form',
-              'page arguments' => array('sum_form'),
-          );
-      $items['success'] = array(
-              'title' => 'Success',
-              'type' => MENU_CALLBACK,
-              'access callback' => TRUE,
-              'page callback' => 'sum_success',
-      );
-      return $items;
+    $items['sum'] = array(
+        'title' => 'Calculate Sum',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('sum_form'),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['sum_success_page'] = array(
+        'title' => 'Success',
+        'page callback' => 'sum_success',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
 }
 
 function sum_form() {
@@ -24,12 +23,16 @@ function sum_form() {
               '#title' => 'left Number',
               '#type' => 'textfield',
               '#description' => t('Please enter your starting number.'),
+              '#element_validate' => array('element_validate_number','element_validate_range1', 'element_validate_even'),
+              '#required' => TRUE,
           );
 
       $form['right_number'] = array(
               '#title' => 'Right Number',
               '#type' => 'textfield',
               '#description' => t('Please enter a number to add to the starting number.'),
+              '#element_validate' => array('element_validate_number','element_validate_range1','element_validate_even'),
+              '#required' => TRUE,
           );
 
       $form['submit'] = array(
@@ -40,15 +43,28 @@ function sum_form() {
       return $form;
 }
 
+function element_validate_range1($element) {
+    if ($element['#value'] > 50 || $element['#value'] < -50) {
+        form_error($element, t('Number must be less than 50 or greater than -50.'));
+    }
+}
+
+function element_validate_even($element) {
+    if ($element['#value'] % 2 != 0) {
+        form_error($element, t('Number must be even.'));
+    }
+}
+
 function sum_form_submit($form, &$form_state) {
       $first_number = $form_state['values']['left_number'];
       $second_number = $form_state['values']['right_number'];
       $sum = $first_number + $second_number;
       $_SESSION['sum_output'] = $sum;
-      $form_state['redirect'] = 'success';
+
+      $form_state['redirect'] = 'sum_success_page';
 }
 
 function sum_success() {
       $answer = $_SESSION['sum_output'];
-      return "You calculated a Sum! The antwoord is $answer";
+      return 'You calculated a Sum! The antwoord is:' . $answer;
 }
