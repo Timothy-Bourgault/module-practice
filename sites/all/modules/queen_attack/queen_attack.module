@@ -52,6 +52,8 @@ function queen_attack_form_submit($form, &$form_state) {
   $position_y = $form_state['values']['position_y'];
   if (abs($queen_x - $position_x) === abs($queen_y - $position_y)) {
     $result = 'Attackable';
+  } elseif ($queen_x === $position_x || $queen_y === $position_y){
+    $result = 'Attackable';
   } else {
     $result = 'Not Attackable';
   }

@@ -1,0 +1,54 @@
+<?php
+
+function clock_angle_menu() {
+    $items['clock_angle'] = array(
+      'title' => 'Clock Angle Guess Checker',
+      'type' => MENU_NORMAL_ITEM,
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('clock_angle_checker_form'),
+      'access callback' => TRUE,
+    );
+    $items['clock_angle_result'] = array(
+      'title' => 'Clock Angle Guess Checker Results!!!!',
+      'type' => MENU_CALLBACK,
+      'page callback' => 'clock_angle_guess_checker_results_page_display',
+      'access callback' => TRUE,
+    );
+    return $items;
+}
+
+function clock_angle_checker_form() {
+    $form['hour'] = array(
+      '#title' => 'Hour',
+      '#type' => 'textfield',
+      '#description' => t("Choose an Hour Wisely!!! OOOOOOoooo, boogity boogity!"),
+    );
+    $form['minute'] = array(
+      '#title' => 'Minute',
+      '#type' => 'textfield',
+      '#description' => t("Choose a Minute Fulishly!!! OOOOOOoooo, boogity!"),
+    );
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => 'Angle Check',
+    );
+    return $form;
+}
+
+function clock_angle_checker_form_submit($form, &$form_state) {
+    $hour = (int)$form_state['values']['hour'];
+    $minute = (int)$form_state['values']['minute'];
+    $hour_angle_degree = $hour * 30;
+    $minute_angle_degree = $minute * 6;
+    $clock_angle = abs($hour_angle_degree - $minute_angle_degree);
+    if ($clock_angle > 180) {
+      $clock_angle = 360 - $clock_angle;
+    }
+    $_SESSION['clock_angle_checker'] = $clock_angle;
+    $form_state['redirect'] = 'clock_angle_result';
+
+}
+
+function clock_angle_guess_checker_results_page_display() {
+    return $_SESSION['clock_angle_checker'];
+}
